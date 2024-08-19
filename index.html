@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="petite-vue.iife.min.js"></script>
+</head>
+
+<body>
+    <div id="app" @vue:mounted="mounted">
+        <button @click="clear">清除</button>
+        <textarea name="" id="" style="width: 500px;height: 150px;" v-model="text" @input="handleTextInput"></textarea>
+        <hr>
+        <div v-for="item in textArr">{{item}} <button @click="copy" :data-text="item">复制</button></div>
+    </div>
+</body>
+<script>
+    PetiteVue.createApp({
+        text:'',
+        textArr:[],
+        clear() {
+            let res=confirm('确定吗')
+            if(res){
+                this.text = ''
+                this.textArr=[]
+                localStorage.removeItem('text')
+            }
+        },
+        handleTextInput(){
+            this.textArr=this.text.split('\n')
+            localStorage.setItem('text',this.text)
+        },
+        copy(e){
+            let {text}=e.target.dataset
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text);
+            }
+        },
+        mounted(){
+            this.text=localStorage.getItem('text') || ''
+            this.textArr= this.text.split('\n')
+        }
+    }).mount("#app")
+</script>
+
+</html>
